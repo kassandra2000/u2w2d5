@@ -43,7 +43,7 @@ public class TravelsService {
         }
         StateTravel stateTravel = null;
         try {
-             stateTravel = StateTravel.valueOf(body.stateTravel());
+             stateTravel = StateTravel.valueOf(body.stateTravel().toUpperCase());
         } catch (IllegalArgumentException e) {
            throw new BadRequestException("Stato del viaggio non valido: " + body.stateTravel());
         }
@@ -85,7 +85,7 @@ public class TravelsService {
         Travel found = findById(reservationId);
         StateTravel stateTravel = null;
         try {
-            stateTravel = StateTravel.valueOf(updatedStateTravel.stateTravel());
+            stateTravel = StateTravel.valueOf(updatedStateTravel.stateTravel().toUpperCase());
         } catch (IllegalArgumentException e) {
             throw new BadRequestException("Stato del viaggio non valido: " + updatedStateTravel.stateTravel());
         }
