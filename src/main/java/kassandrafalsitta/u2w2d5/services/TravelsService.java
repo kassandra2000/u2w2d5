@@ -36,7 +36,7 @@ public class TravelsService {
         StateTravel stateTravel = null;
         try {
              stateTravel = StateTravel.valueOf(body.stateTravel());
-        } catch (BadRequestException e) {
+        } catch (IllegalArgumentException e) {
            throw new BadRequestException("Stato del viaggio non valido: " + body.stateTravel());
         }
         Travel employee = new Travel(body.destination(), body.date(), stateTravel);
@@ -53,7 +53,7 @@ public class TravelsService {
         StateTravel stateTravel = null;
         try {
             stateTravel = StateTravel.valueOf(updatedTravel.stateTravel());
-        } catch (BadRequestException e) {
+        } catch (IllegalArgumentException e) {
             throw new BadRequestException("Stato del viaggio non valido: " + updatedTravel.stateTravel());
         }
         found.setStateTravel(stateTravel);
