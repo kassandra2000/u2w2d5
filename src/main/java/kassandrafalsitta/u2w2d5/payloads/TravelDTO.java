@@ -12,7 +12,7 @@ public record TravelDTO(
         @Size(min = 3, max = 30, message = "La destinazione deve essere compresa tra 3 e 30 caratteri")
         String destination,
         @NotEmpty(message = "La data è obbligatoria")
-        @Size(min = 10, max = 10, message = "La data deve avere 8 caratteri")
+        @Size(min = 10, max = 10, message = "La data deve avere 10 caratteri")
         String date,
         @NotEmpty(message = "Lo stato è obbligatorio")
         String stateTravel

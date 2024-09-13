@@ -40,13 +40,27 @@ public class ReservationsService {
         } catch (DateTimeParseException e) {
             throw new BadRequestException("Il formato della data non è valido: " + body.date()+" inserire nel seguente formato: AAAA/MM/GG");
         }
-        this.reservationsRepository.findByEmployeeIdAndDate(body.employeeID(),date).ifPresent(
+
+        UUID employeeID = null;
+        try {
+            employeeID = UUID.fromString(body.employeeID());
+        } catch (NumberFormatException e) {
+            throw new BadRequestException("L'UUID del dipendente non è corretto");
+        }
+        UUID travelID = null;
+        try {
+            travelID = UUID.fromString(body.travelID());
+        } catch (NumberFormatException e) {
+            throw new BadRequestException("L'UUID del viaggio non è corretto");
+        }
+
+        this.reservationsRepository.findByEmployeeIdAndDate(employeeID,date).ifPresent(
                 reservation -> {
                     throw new BadRequestException("La data " + body.date() + " è già in uso per il dipendente " + body.employeeID());
                 }
         );
-        Travel travel = travelsService.findById(body.travelID());
-        Employee employee = employeesService.findById(body.employeeID());
+        Travel travel = travelsService.findById(travelID);
+        Employee employee = employeesService.findById(employeeID);
 
         Reservation reservation = new Reservation(date, body.preferences(), travel, employee);
         return this.reservationsRepository.save(reservation);
@@ -57,6 +71,18 @@ public class ReservationsService {
     }
 
     public Reservation findByIdAndUpdate(UUID reservationId, ReservationDTO updatedReservation) {
+        UUID employeeID = null;
+        try {
+            employeeID = UUID.fromString(updatedReservation.employeeID());
+        } catch (DateTimeParseException e) {
+            throw new BadRequestException("L'UUID del dipendente non è corretto");
+        }
+        UUID travelID = null;
+        try {
+            employeeID = UUID.fromString(updatedReservation.travelID());
+        } catch (DateTimeParseException e) {
+            throw new BadRequestException("L'UUID del viaggio non è corretto");
+        }
         Reservation found = findById(reservationId);
         LocalDate date = null;
         try {
@@ -66,8 +92,8 @@ public class ReservationsService {
         }
         found.setDate(date);
         found.setPreferences(updatedReservation.preferences());
-        Travel travel = travelsService.findById(updatedReservation.travelID());
-        Employee employee = employeesService.findById(updatedReservation.employeeID());
+        Travel travel = travelsService.findById(travelID);
+        Employee employee = employeesService.findById(employeeID);
         found.setTravel(travel);
         found.setEmployee(employee);
         return this.reservationsRepository.save(found);
