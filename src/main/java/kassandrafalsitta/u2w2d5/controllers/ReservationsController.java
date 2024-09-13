@@ -1,5 +1,6 @@
 package kassandrafalsitta.u2w2d5.controllers;
 
+import jakarta.validation.Valid;
 import kassandrafalsitta.u2w2d5.entities.Reservation;
 import kassandrafalsitta.u2w2d5.exceptions.BadRequestException;
 import kassandrafalsitta.u2w2d5.payloads.ReservationDTO;
@@ -31,7 +32,7 @@ public class ReservationsController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ReservationRespDTO createReservation(@RequestBody @Validated ReservationDTO body, BindingResult validationResult) {
+    public ReservationRespDTO createReservation(@RequestBody @Valid  @Validated ReservationDTO body, BindingResult validationResult) {
         if(validationResult.hasErrors())  {
             String messages = validationResult.getAllErrors().stream()
                     .map(DefaultMessageSourceResolvable::getDefaultMessage)
@@ -48,7 +49,7 @@ public class ReservationsController {
     }
 
     @PutMapping("/{reservationId}")
-    public Reservation findReservationByIdAndUpdate(@PathVariable UUID reservationId, @RequestBody ReservationDTO body) {
+    public Reservation findReservationByIdAndUpdate(@PathVariable UUID reservationId, @RequestBody @Valid ReservationDTO body) {
         return reservationsService.findByIdAndUpdate(reservationId, body);
     }
 
