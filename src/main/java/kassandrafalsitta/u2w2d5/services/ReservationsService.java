@@ -34,11 +34,11 @@ public class ReservationsService {
     }
 
     public Reservation saveReservation(ReservationDTO body) {
-        LocalDate date = null;
+        LocalDate dateRes = null;
         try {
-            date = LocalDate.parse(body.date());
+            dateRes = LocalDate.parse(body.dateRes());
         } catch (DateTimeParseException e) {
-            throw new BadRequestException("Il formato della data non è valido: " + body.date()+" inserire nel seguente formato: AAAA/MM/GG");
+            throw new BadRequestException("Il formato della data non è valido: " + body.dateRes()+" inserire nel seguente formato: AAAA-MM-GG");
         }
 
         UUID employeeID = null;
@@ -53,16 +53,16 @@ public class ReservationsService {
         } catch (NumberFormatException e) {
             throw new BadRequestException("L'UUID del viaggio non è corretto");
         }
-
-        this.reservationsRepository.findByEmployeeIdAndDate(employeeID,date).ifPresent(
-                reservation -> {
-                    throw new BadRequestException("La data " + body.date() + " è già in uso per il dipendente " + body.employeeID());
-                }
-        );
         Travel travel = travelsService.findById(travelID);
         Employee employee = employeesService.findById(employeeID);
+        this.reservationsRepository.findByEmployeeIdAndTravel_DateTrav(employeeID,travel.getDateTrav()).ifPresent(
+                reservation -> {
+                    throw new BadRequestException("La data " + body.dateRes() + " è già in uso per il dipendente " + body.employeeID());
+                }
+        );
 
-        Reservation reservation = new Reservation(date, body.preferences(), travel, employee);
+
+        Reservation reservation = new Reservation(dateRes, body.preferences(), travel, employee);
         return this.reservationsRepository.save(reservation);
     }
 
@@ -86,11 +86,11 @@ public class ReservationsService {
         Reservation found = findById(reservationId);
         LocalDate date = null;
         try {
-            date = LocalDate.parse(updatedReservation.date());
+            date = LocalDate.parse(updatedReservation.dateRes());
         } catch (DateTimeParseException e) {
-            throw new BadRequestException("Il formato della data non è valido: " + updatedReservation.date()+" inserire nel seguente formato: AAAA/MM/GG");
+            throw new BadRequestException("Il formato della data non è valido: " + updatedReservation.dateRes()+" inserire nel seguente formato: AAAA/MM/GG");
         }
-        found.setDate(date);
+        found.setDateRes(date);
         found.setPreferences(updatedReservation.preferences());
         Travel travel = travelsService.findById(travelID);
         Employee employee = employeesService.findById(employeeID);

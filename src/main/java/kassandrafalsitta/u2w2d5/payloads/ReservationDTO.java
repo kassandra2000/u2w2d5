@@ -11,7 +11,7 @@ import java.util.UUID;
 public record ReservationDTO(
         @NotEmpty(message = "La data è obbligatoria")
         @Size(min = 10, max = 10, message = "La data deve avere 10 caratteri")
-        String date,
+        String dateRes,
         @NotEmpty(message = "La preferenza è obbligatoria")
         @Size(min = 3, max = 100, message = "La preferenza deve essere compresa tra 3 e 100 caratteri")
         String preferences,

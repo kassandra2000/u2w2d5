@@ -31,15 +31,15 @@ public class TravelsService {
     }
 
     public Travel saveTravel(TravelDTO body) {
-        LocalDate date = null;
+        LocalDate dateTrav = null;
         try {
-            date = LocalDate.parse(body.date());
+            dateTrav = LocalDate.parse(body.dateTrav());
         } catch ( DateTimeParseException e) {
-            throw new BadRequestException("Il formato della data non è valido: " + body.date()+" inserire nel seguente formato: AAAA/MM/GG");
+            throw new BadRequestException("Il formato della data non è valido: " + body.dateTrav()+" inserire nel seguente formato: AAAA/MM/GG");
         }
-        Optional<Travel> dateTravelAndDestination = travelsRepository.findByDateAndDestination(date,body.destination());
+        Optional<Travel> dateTravelAndDestination = travelsRepository.findByDateTravAndDestination(dateTrav,body.destination());
         if (dateTravelAndDestination.isPresent()) {
-            throw new BadRequestException("La data " + body.date() + " e la destinazione " + body.destination() + " sono già in uso!");
+            throw new BadRequestException("La data " + body.dateTrav() + " e la destinazione " + body.destination() + " sono già in uso!");
         }
         StateTravel stateTravel = null;
         try {
@@ -49,7 +49,7 @@ public class TravelsService {
         }
 
 
-        Travel employee = new Travel(body.destination(), date, stateTravel);
+        Travel employee = new Travel(body.destination(), dateTrav, stateTravel);
         return this.travelsRepository.save(employee);
     }
 
@@ -61,11 +61,11 @@ public class TravelsService {
         Travel found = findById(reservationId);
         LocalDate date = null;
         try {
-            date = LocalDate.parse(updatedTravel.date());
+            date = LocalDate.parse(updatedTravel.dateTrav());
         } catch (DateTimeParseException e) {
-            throw new BadRequestException("Il formato della data non è valido: " + updatedTravel.date()+" inserire nel seguente formato: AAAA/MM/GG");
+            throw new BadRequestException("Il formato della data non è valido: " + updatedTravel.dateTrav()+" inserire nel seguente formato: AAAA/MM/GG");
         }
-        found.setDate(date);
+        found.setDateTrav(date);
         StateTravel stateTravel = null;
         try {
             stateTravel = StateTravel.valueOf(updatedTravel.stateTravel());

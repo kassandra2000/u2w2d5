@@ -34,7 +34,7 @@ public class ExceptionsHandler {
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorDTO handleMissingBody(HttpMessageNotReadableException ex, WebRequest request) {
         return new ErrorDTO("devi inserire un body", LocalDateTime.now());
     }

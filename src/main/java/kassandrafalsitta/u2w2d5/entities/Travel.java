@@ -19,13 +19,13 @@ public class Travel {
     @Setter(AccessLevel.NONE)
     private UUID id;
     private String destination;
-    private LocalDate date;
+    private LocalDate dateTrav;
     @Enumerated(EnumType.STRING)
     private StateTravel stateTravel;
     //costruttore
-    public Travel( String destination, LocalDate date, StateTravel stateTravel) {
+    public Travel( String destination, LocalDate dateTrav, StateTravel stateTravel) {
         this.destination = destination;
-        this.date = date;
+        this.dateTrav = dateTrav;
         this.stateTravel = stateTravel;
     }
 }

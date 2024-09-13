@@ -32,7 +32,7 @@ public class TravelsController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public TravelRespDTO createTravel(@RequestBody @Valid @Validated TravelDTO body, BindingResult validationResult) {
+    public TravelRespDTO createTravel(@RequestBody @Validated TravelDTO body, BindingResult validationResult) {
         if(validationResult.hasErrors())  {
             String messages = validationResult.getAllErrors().stream()
                     .map(DefaultMessageSourceResolvable::getDefaultMessage)
@@ -49,7 +49,7 @@ public class TravelsController {
     }
 
     @PutMapping("/{travelId}")
-    public Travel findTravelByIdAndUpdate(@PathVariable UUID travelId, @RequestBody @Valid TravelDTO body) {
+    public Travel findTravelByIdAndUpdate(@PathVariable UUID travelId, @RequestBody @Validated TravelDTO body) {
         return travelsService.findByIdAndUpdate(travelId, body);
     }
 
@@ -60,7 +60,7 @@ public class TravelsController {
     }
 
     @PatchMapping("/{travelId}")
-    public Travel findTravelByIdAndUpdateState(@PathVariable UUID travelId, @RequestBody @Valid TravelStateDTO body) {
+    public Travel findTravelByIdAndUpdateState(@PathVariable UUID travelId, @RequestBody @Validated TravelStateDTO body) {
         return travelsService.findByIdAndUpdateState(travelId, body);
     }
 

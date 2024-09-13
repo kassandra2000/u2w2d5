@@ -11,7 +11,7 @@ import java.util.UUID;
 
 @Repository
 public interface TravelsRepository extends JpaRepository<Travel, UUID> {
-    Optional<Travel> findByDateAndDestination(LocalDate date,String destination);
+    Optional<Travel> findByDateTravAndDestination(LocalDate date,String destination);
 
 
 }

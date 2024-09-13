@@ -13,7 +13,7 @@ public record TravelDTO(
         String destination,
         @NotEmpty(message = "La data è obbligatoria")
         @Size(min = 10, max = 10, message = "La data deve avere 10 caratteri")
-        String date,
+        String dateTrav,
         @NotEmpty(message = "Lo stato è obbligatorio")
         String stateTravel
 ) {

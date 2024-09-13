@@ -32,7 +32,7 @@ public class ReservationsController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ReservationRespDTO createReservation(@RequestBody @Valid  @Validated ReservationDTO body, BindingResult validationResult) {
+    public ReservationRespDTO createReservation(@RequestBody @Validated ReservationDTO body, BindingResult validationResult) {
         if(validationResult.hasErrors())  {
             String messages = validationResult.getAllErrors().stream()
                     .map(DefaultMessageSourceResolvable::getDefaultMessage)
@@ -49,7 +49,7 @@ public class ReservationsController {
     }
 
     @PutMapping("/{reservationId}")
-    public Reservation findReservationByIdAndUpdate(@PathVariable UUID reservationId, @RequestBody @Valid ReservationDTO body) {
+    public Reservation findReservationByIdAndUpdate(@PathVariable UUID reservationId, @RequestBody @Validated ReservationDTO body) {
         return reservationsService.findByIdAndUpdate(reservationId, body);
     }
 

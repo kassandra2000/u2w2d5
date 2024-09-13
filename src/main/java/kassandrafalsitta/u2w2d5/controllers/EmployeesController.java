@@ -35,7 +35,7 @@ public class EmployeesController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public EmployeeRespDTO createEmployee(@RequestBody @Valid @Validated EmployeeDTO body, BindingResult validationResult) {
+    public EmployeeRespDTO createEmployee(@RequestBody  @Validated EmployeeDTO body, BindingResult validationResult) {
         if(validationResult.hasErrors())  {
             String messages = validationResult.getAllErrors().stream()
                     .map(DefaultMessageSourceResolvable::getDefaultMessage)
@@ -52,7 +52,7 @@ public class EmployeesController {
     }
 
     @PutMapping("/{employeeId}")
-    public Employee findEmployeeByIdAndUpdate(@PathVariable UUID employeeId, @RequestBody @Valid EmployeeDTO body) {
+    public Employee findEmployeeByIdAndUpdate(@PathVariable UUID employeeId, @RequestBody @Validated EmployeeDTO body) {
         return employeesService.findByIdAndUpdate(employeeId, body);
     }
 
