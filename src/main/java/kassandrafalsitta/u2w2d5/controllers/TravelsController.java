@@ -3,6 +3,7 @@ import kassandrafalsitta.u2w2d5.entities.Travel;
 import kassandrafalsitta.u2w2d5.exceptions.BadRequestException;
 import kassandrafalsitta.u2w2d5.payloads.TravelDTO;
 import kassandrafalsitta.u2w2d5.payloads.TravelRespDTO;
+import kassandrafalsitta.u2w2d5.payloads.TravelStateDTO;
 import kassandrafalsitta.u2w2d5.services.TravelsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -55,6 +56,11 @@ public class TravelsController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void findTravelByIdAndDelete(@PathVariable UUID travelId) {
         travelsService.findByIdAndDelete(travelId);
+    }
+
+    @PatchMapping("/{travelId}")
+    public Travel findTravelByIdAndUpdateState(@PathVariable UUID travelId, @RequestBody TravelStateDTO body) {
+        return travelsService.findByIdAndUpdateState(travelId, body);
     }
 
 

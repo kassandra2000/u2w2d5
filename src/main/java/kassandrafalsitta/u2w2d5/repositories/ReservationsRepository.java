@@ -11,5 +11,6 @@ import java.util.UUID;
 
 @Repository
 public interface ReservationsRepository extends JpaRepository<Reservation, UUID> {
+    //anche se non ho un parametro chiamato EmployeeId Spring si va a cercare l'id del dipendente perchè tramite il nome capisce che sto cercando il campo id
     Optional<Reservation> findByEmployeeIdAndDate(UUID employeeId, LocalDate date);
 }

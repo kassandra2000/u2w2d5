@@ -5,6 +5,7 @@ import kassandrafalsitta.u2w2d5.enums.StateTravel;
 import kassandrafalsitta.u2w2d5.exceptions.BadRequestException;
 import kassandrafalsitta.u2w2d5.exceptions.NotFoundException;
 import kassandrafalsitta.u2w2d5.payloads.TravelDTO;
+import kassandrafalsitta.u2w2d5.payloads.TravelStateDTO;
 import kassandrafalsitta.u2w2d5.repositories.TravelsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -15,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -79,5 +79,18 @@ public class TravelsService {
 
     public void findByIdAndDelete(UUID travelId) {
         this.travelsRepository.delete(this.findById(travelId));
+    }
+
+    public Travel findByIdAndUpdateState(UUID reservationId, TravelStateDTO updatedStateTravel) {
+        Travel found = findById(reservationId);
+        StateTravel stateTravel = null;
+        try {
+            stateTravel = StateTravel.valueOf(updatedStateTravel.stateTravel());
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestException("Stato del viaggio non valido: " + updatedStateTravel.stateTravel());
+        }
+        found.setStateTravel(stateTravel);
+        return this.travelsRepository.save(found);
+
     }
 }
