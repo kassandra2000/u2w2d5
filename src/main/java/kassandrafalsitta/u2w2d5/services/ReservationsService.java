@@ -14,6 +14,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.UUID;
 
 @Service
@@ -32,7 +34,13 @@ public class ReservationsService {
     }
 
     public Reservation saveReservation(ReservationDTO body) {
-        this.reservationsRepository.findByEmployeeIdAndDate(body.employeeID(), body.date()).ifPresent(
+        LocalDate date = null;
+        try {
+            date = LocalDate.parse(body.date());
+        } catch (DateTimeParseException e) {
+            throw new BadRequestException("Il formato della data non è valido: " + body.date()+" inserire nel seguente formato: AAAA/MM/GG");
+        }
+        this.reservationsRepository.findByEmployeeIdAndDate(body.employeeID(),date).ifPresent(
                 reservation -> {
                     throw new BadRequestException("La data " + body.date() + " è già in uso per il dipendente " + body.employeeID());
                 }
@@ -40,7 +48,7 @@ public class ReservationsService {
         Travel travel = travelsService.findById(body.travelID());
         Employee employee = employeesService.findById(body.employeeID());
 
-        Reservation reservation = new Reservation(body.date(), body.preferences(), travel, employee);
+        Reservation reservation = new Reservation(date, body.preferences(), travel, employee);
         return this.reservationsRepository.save(reservation);
     }
 
@@ -50,7 +58,13 @@ public class ReservationsService {
 
     public Reservation findByIdAndUpdate(UUID reservationId, ReservationDTO updatedReservation) {
         Reservation found = findById(reservationId);
-        found.setDate(updatedReservation.date());
+        LocalDate date = null;
+        try {
+            date = LocalDate.parse(updatedReservation.date());
+        } catch (DateTimeParseException e) {
+            throw new BadRequestException("Il formato della data non è valido: " + updatedReservation.date()+" inserire nel seguente formato: AAAA/MM/GG");
+        }
+        found.setDate(date);
         found.setPreferences(updatedReservation.preferences());
         Travel travel = travelsService.findById(updatedReservation.travelID());
         Employee employee = employeesService.findById(updatedReservation.employeeID());

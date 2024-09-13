@@ -13,6 +13,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -28,9 +31,14 @@ public class TravelsService {
     }
 
     public Travel saveTravel(TravelDTO body) {
-        Optional<Travel> dateTravel = travelsRepository.findByDate(body.date());
-        Optional<Travel> destinationTravel = travelsRepository.findByDestination(body.destination());
-        if (dateTravel.isPresent() && destinationTravel.isPresent()) {
+        LocalDate date = null;
+        try {
+            date = LocalDate.parse(body.date());
+        } catch ( DateTimeParseException e) {
+            throw new BadRequestException("Il formato della data non è valido: " + body.date()+" inserire nel seguente formato: AAAA/MM/GG");
+        }
+        Optional<Travel> dateTravelAndDestination = travelsRepository.findByDateAndDestination(date,body.destination());
+        if (dateTravelAndDestination.isPresent()) {
             throw new BadRequestException("La data " + body.date() + " e la destinazione " + body.destination() + " sono già in uso!");
         }
         StateTravel stateTravel = null;
@@ -39,7 +47,9 @@ public class TravelsService {
         } catch (IllegalArgumentException e) {
            throw new BadRequestException("Stato del viaggio non valido: " + body.stateTravel());
         }
-        Travel employee = new Travel(body.destination(), body.date(), stateTravel);
+
+
+        Travel employee = new Travel(body.destination(), date, stateTravel);
         return this.travelsRepository.save(employee);
     }
 
@@ -49,7 +59,13 @@ public class TravelsService {
 
     public Travel findByIdAndUpdate(UUID reservationId, TravelDTO updatedTravel) {
         Travel found = findById(reservationId);
-        found.setDate(updatedTravel.date());
+        LocalDate date = null;
+        try {
+            date = LocalDate.parse(updatedTravel.date());
+        } catch (DateTimeParseException e) {
+            throw new BadRequestException("Il formato della data non è valido: " + updatedTravel.date()+" inserire nel seguente formato: AAAA/MM/GG");
+        }
+        found.setDate(date);
         StateTravel stateTravel = null;
         try {
             stateTravel = StateTravel.valueOf(updatedTravel.stateTravel());
