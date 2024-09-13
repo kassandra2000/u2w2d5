@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 import java.util.UUID;
 
 @Repository
-public interface TravelRepository extends JpaRepository<Travel, UUID> {
+public interface TravelsRepository extends JpaRepository<Travel, UUID> {
 }
