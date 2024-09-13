@@ -47,6 +47,20 @@ public class TravelsService {
         return this.travelsRepository.findById(travelId).orElseThrow(() -> new NotFoundException(travelId));
     }
 
+    public Travel findByIdAndUpdate(UUID reservationId, TravelDTO updatedTravel) {
+        Travel found = findById(reservationId);
+        found.setDate(updatedTravel.date());
+        StateTravel stateTravel = null;
+        try {
+            stateTravel = StateTravel.valueOf(updatedTravel.stateTravel());
+        } catch (BadRequestException e) {
+            throw new BadRequestException("Stato del viaggio non valido: " + updatedTravel.stateTravel());
+        }
+        found.setStateTravel(stateTravel);
+        found.setDestination(updatedTravel.destination());
+        return this.travelsRepository.save(found);
+    }
+
     public void findByIdAndDelete(UUID travelId) {
         this.travelsRepository.delete(this.findById(travelId));
     }
