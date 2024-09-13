@@ -9,7 +9,6 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @ToString
 @Entity
 @Table(name = "reservations")
@@ -27,4 +26,11 @@ public class Reservation {
     @ManyToOne
     @JoinColumn(name = "employee_id")
     private Employee employee;
+    //costruttore
+    public Reservation( LocalDate date, String preferences, Travel travel, Employee employee) {
+        this.date = date;
+        this.preferences = preferences;
+        this.travel = travel;
+        this.employee = employee;
+    }
 }

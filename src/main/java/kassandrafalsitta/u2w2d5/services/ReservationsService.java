@@ -2,9 +2,11 @@ package kassandrafalsitta.u2w2d5.services;
 
 import kassandrafalsitta.u2w2d5.entities.Employee;
 import kassandrafalsitta.u2w2d5.entities.Reservation;
+import kassandrafalsitta.u2w2d5.entities.Travel;
+import kassandrafalsitta.u2w2d5.exceptions.BadRequestException;
 import kassandrafalsitta.u2w2d5.exceptions.NotFoundException;
+import kassandrafalsitta.u2w2d5.payloads.ReservationDTO;
 import kassandrafalsitta.u2w2d5.repositories.ReservationsRepository;
-import kassandrafalsitta.u2w2d5.repositories.TravelsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,6 +20,10 @@ import java.util.UUID;
 public class ReservationsService {
     @Autowired
     private ReservationsRepository reservationsRepository;
+    @Autowired
+    private EmployeesService employeesService;
+    @Autowired
+    private TravelsService travelsService;
 
     public Page<Reservation> findAll(int page, int size, String sortBy) {
         if (page > 100) page = 100;
@@ -25,7 +31,35 @@ public class ReservationsService {
         return this.reservationsRepository.findAll(pageable);
     }
 
+    public Reservation saveReservation(ReservationDTO body) {
+        this.reservationsRepository.findByEmployeeIdAndDate(body.employeeID(), body.date()).ifPresent(
+                reservation -> {
+                    throw new BadRequestException("La data " + body.date() + " è già in uso per il dipendente " + body.employeeID());
+                }
+        );
+        Travel travel = travelsService.findById(body.travelID());
+        Employee employee = employeesService.findById(body.employeeID());
+
+        Reservation reservation = new Reservation(body.date(), body.preferences(), travel, employee);
+        return this.reservationsRepository.save(reservation);
+    }
+
     public Reservation findById(UUID reservationId) {
         return this.reservationsRepository.findById(reservationId).orElseThrow(() -> new NotFoundException(reservationId));
+    }
+
+    public Reservation findByIdAndUpdate(UUID reservationId, ReservationDTO updatedReservation) {
+        Reservation found = findById(reservationId);
+        found.setDate(updatedReservation.date());
+        found.setPreferences(updatedReservation.preferences());
+        Travel travel = travelsService.findById(updatedReservation.travelID());
+        Employee employee = employeesService.findById(updatedReservation.employeeID());
+        found.setTravel(travel);
+        found.setEmployee(employee);
+        return this.reservationsRepository.save(found);
+    }
+
+    public void findByIdAndDelete(UUID reservationId) {
+        this.reservationsRepository.delete(this.findById(reservationId));
     }
 }
